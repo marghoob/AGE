@@ -203,14 +203,16 @@ void AGEaligner::printAlignment()
 
   int e1 = s1 + inc1*(_seq1.length() - 1);
   int e2 = s2 + inc2*(_seq2.length() - 1);
-  cout<<"First  seq ["
+  cout << "First seq " << s1 << " " << e1 << " " << _seq1.length() << " nucs " << _s1.name() << endl;
+  cout << "Second seq " << s2 << " " << e2 << " " << _seq2.length() << " nucs " << _s2.name() << endl;
+  /*cout<<"First  seq ["
       <<setw(calcWidth(s1,s2))<<s1<<","
       <<setw(calcWidth(e1,e2))<<e1<<"] => "
       <<setw(9)<<_seq1.length()<<" nucs '"<<_s1.name()<<"'"<<endl;
   cout<<"Second seq ["
       <<setw(calcWidth(s1,s2))<<s2<<","
       <<setw(calcWidth(e1,e2))<<e2<<"] => "
-      <<setw(9)<<_seq2.length()<<" nucs '"<<_s2.name()<<"'"<<endl<<endl;
+      <<setw(9)<<_seq2.length()<<" nucs '"<<_s2.name()<<"'"<<endl<<endl;*/
 
   int n_frg = 0;
   for (AliFragment *f = _frags;f;f = f->next()) n_frg++;
@@ -232,19 +234,26 @@ void AGEaligner::printAlignment()
     identic = (int)(100.*n_id[0]/n_ali[0] + 0.5);
     gap     = (int)(100.*n_gap[0]/n_ali[0] + 0.5);
   }
-    
-  cout<<"Score:   "<<setw(9)<<_max<<endl;
-  cout<<"Aligned: "<<setw(9)<<n_ali[0]<<"        nucs"<<endl;
-  cout<<"Identic: "<<setw(9)<<n_id[0]<<" ("<<setw(3)<<identic<<"%) nucs";
+
+  cout << "Score: " << _max << endl;
+  cout << "Aligned: " << n_ali[0] << " nucs" << endl;
+  cout << "Identic: " << n_id[0] << " (" << identic << "%) nucs";
+  //cout<<"Score:   "<<setw(9)<<_max<<endl;
+  //cout<<"Aligned: "<<setw(9)<<n_ali[0]<<"        nucs"<<endl;
+  //cout<<"Identic: "<<setw(9)<<n_id[0]<<" ("<<setw(3)<<identic<<"%) nucs";
   if (n_frg > 1) {
     cout<<" =>";
-    for (int fr = 1;fr < n_frg + 1;fr++)
-      cout<<" "<<setw(9)<<n_id[fr]<<" ("<<setw(3)
-	  <<(int)(100.*n_id[fr]/n_ali[fr] + 0.5)<<"%)";
+    for (int fr = 1;fr < n_frg + 1;fr++) {
+      cout << " " << n_id[fr] << " (" << (int)(100. * n_id[fr] / n_ali[fr] + 0.5) << "%)";
+      //cout<<" "<<setw(9)<<n_id[fr]<<" ("<<setw(3)
+	  //<<(int)(100.*n_id[fr]/n_ali[fr] + 0.5)<<"%)";
+    }
   }
   cout<<endl;
-  cout<<"Gaps:    "<<setw(9)<<n_gap[0]<<" ("<<setw(3)
-      <<gap<<"%) nucs"<<endl<<endl;
+
+  cout << "Gaps: " << n_gap[0] << " (" << gap << "%) nucs" << endl << endl;
+  //cout<<"Gaps:    "<<setw(9)<<n_gap[0]<<" ("<<setw(3)
+  //    <<gap<<"%) nucs"<<endl<<endl;
 
   // Printing aligned region coordinates
   if (n_ali[0] > 0) {
