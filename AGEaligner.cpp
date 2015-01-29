@@ -122,14 +122,14 @@ bool AGEaligner::align(Scorer &scr,int flag)
 #ifdef AGE_TIME
   gettimeofday(&ali_e,NULL);
 
-//   cout<<"Scoring  "<<score_e.tv_sec - score_s.tv_sec +
-//     (score_e.tv_usec - score_s.tv_usec)/1000000.<<" s"<<endl;
-//   cout<<"Maxima   "<<max_e.tv_sec - max_s.tv_sec +
-//     (max_e.tv_usec - max_s.tv_usec)/1000000.<<" s"<<endl;
-//   cout<<"Finding  "<<find_e.tv_sec - find_s.tv_sec +
-//     (find_e.tv_usec - find_s.tv_usec)/1000000.<<" s"<<endl;
-//   cout<<"Aligning "<<ali_e.tv_sec - ali_s.tv_sec +
-//     (ali_e.tv_usec - ali_s.tv_usec)/1000000.<<" s"<<endl;
+   cout<<"Scoring  "<<score_e.tv_sec - score_s.tv_sec +
+     (score_e.tv_usec - score_s.tv_usec)/1000000.<<" s"<<endl;
+   cout<<"Maxima   "<<max_e.tv_sec - max_s.tv_sec +
+     (max_e.tv_usec - max_s.tv_usec)/1000000.<<" s"<<endl;
+   cout<<"Finding  "<<find_e.tv_sec - find_s.tv_sec +
+     (find_e.tv_usec - find_s.tv_usec)/1000000.<<" s"<<endl;
+   cout<<"Aligning "<<ali_e.tv_sec - ali_s.tv_sec +
+     (ali_e.tv_usec - ali_s.tv_usec)/1000000.<<" s"<<endl;
 #endif
 
   // Doing auxilary alignment 
@@ -237,92 +237,123 @@ void AGEaligner::printAlignment()
 
   cout << "Score: " << _max << endl;
   cout << "Aligned: " << n_ali[0] << " nucs" << endl;
-  cout << "Identic: " << n_id[0] << " (" << identic << "%) nucs";
+  cout << "Identic: " << n_id[0] << " " << identic << " ";
   //cout<<"Score:   "<<setw(9)<<_max<<endl;
   //cout<<"Aligned: "<<setw(9)<<n_ali[0]<<"        nucs"<<endl;
   //cout<<"Identic: "<<setw(9)<<n_id[0]<<" ("<<setw(3)<<identic<<"%) nucs";
   if (n_frg > 1) {
-    cout<<" =>";
+    cout << " ";
     for (int fr = 1;fr < n_frg + 1;fr++) {
-      cout << " " << n_id[fr] << " (" << (int)(100. * n_id[fr] / n_ali[fr] + 0.5) << "%)";
+      cout << " " << n_id[fr] << " " << (int)(100. * n_id[fr] / n_ali[fr] + 0.5) << " ";
       //cout<<" "<<setw(9)<<n_id[fr]<<" ("<<setw(3)
 	  //<<(int)(100.*n_id[fr]/n_ali[fr] + 0.5)<<"%)";
     }
   }
   cout<<endl;
 
-  cout << "Gaps: " << n_gap[0] << " (" << gap << "%) nucs" << endl << endl;
+  cout << "Gaps: " << n_gap[0] << " " << gap << " percent nucs" << endl << endl;
   //cout<<"Gaps:    "<<setw(9)<<n_gap[0]<<" ("<<setw(3)
   //    <<gap<<"%) nucs"<<endl<<endl;
 
   // Printing aligned region coordinates
   if (n_ali[0] > 0) {
-    cout<<"Alignment:"<<endl;
-    cout<<" first  seq =>  ";
+    //cout<<"Alignment:"<<endl;
+    //cout<<" first  seq =>  ";
+    cout << "Alignment: ";
     for (AliFragment *f = _frags;f;f = f->next()) {
-      if (f->prev()) cout<<" "<<EXCISED_MESSAGE<<" ";
+      //if (f->prev()) cout<<" "<<EXCISED_MESSAGE<<" ";
       int ws = calcWidth(f->start1(),f->start2());
       int we = calcWidth(f->end1(),  f->end2());
-      cout<<"["<<setw(ws)<<f->start1()<<","<<setw(we)<<f->end1()<<"]";
+      //cout<<"["<<setw(ws)<<f->start1()<<","<<setw(we)<<f->end1()<<"]";
+      cout << " " << f->start1() << "," << f->end1();
     }
-    cout<<endl;
-    cout<<" second seq =>  ";
+    //cout<<endl;
+    //cout<<" second seq =>  ";
+    cout << " : ";
     for (AliFragment *f = _frags;f;f = f->next()) {
-      if (f->prev()) cout<<" "<<EXCISED_MESSAGE<<" ";
+      //if (f->prev()) cout<<" "<<EXCISED_MESSAGE<<" ";
       int ws = calcWidth(f->start1(),f->start2());
       int we = calcWidth(f->end1(),  f->end2());
-      cout<<"["<<setw(ws)<<f->start2()<<","<<setw(we)<<f->end2()<<"]";
-	
+      //cout<<"["<<setw(ws)<<f->start2()<<","<<setw(we)<<f->end2()<<"]";
+	  cout << " " << f->start2() << "," << f->end2();
     }
     cout<<endl;
   }
 
   int s,e,len;
   if (n_frg > 1) {
-    cout<<endl<<EXCISED_MESSAGEs<<":"<<endl;
+    cout<<endl<<EXCISED_MESSAGEs<<":";
     for (AliFragment *f = _frags;f && f->next();f = f->next()) {
-      if (!getExcisedRange(f,s,e)) continue;
-      cout<<" first  seq => ";
+      //if (!getExcisedRange(f,s,e)) continue
+      if (!getExcisedRange(f, s, e)) {
+        //cout << " -1,-1,-1 -1,-1,-1 ";
+        continue;
+      }
       len = abs(s - e - inc1);
-      cout<<setw(9)<<len<<" nucs";
-      if (len > 0) cout<<" ["<<s<<","<<e<<"]";
-      cout<<endl;
-      cout<<" second seq => ";
+      cout << " " << len << "," << s << "," << e << " ";
+      //cout<<" first  seq => ";
+      //len = abs(s - e - inc1);
+      //cout<<setw(9)<<len<<" nucs";
+      //if (len > 0) cout<<" ["<<s<<","<<e<<"]";
+      //cout<<endl;
+      //cout<<" second seq => ";
       s = f->end2() + inc2;
       e = f->next()->start2() - inc2;
       len = abs(s - e - inc2);
-      cout<<setw(9)<<len<<" nucs";
-      if (len > 0) cout<<" ["<<s<<","<<e<<"]";
-      cout<<endl;
+      //cout<<setw(9)<<len<<" nucs";
+      //if (len > 0) cout<<" ["<<s<<","<<e<<"]";
+      cout << " " << len << "," << s << "," << e << " ";
+      //cout<<endl;
     }
+    cout << endl;
 
-    if (_n_bpoints > 1) cout<<"ALTERNATIVE REGION(S): "<<_n_bpoints - 1<<endl;
+    if (_n_bpoints > 1) cout<<"ALTERNATIVE REGION(S): "<<_n_bpoints - 1;
     for (int i = _n_bpoints - 1;i >= 1;i--) {
-      if (!findAlignment(i,true)) continue;  // Fiding alternative alignment
-      if (!_frags_alt) continue;
-      for (AliFragment *f = _frags_alt;f && f->next();f = f->next()) {
-	if (!getExcisedRange(f,s,e)) continue;
-	cout<<" first  seq => ";
-	len = abs(s - e - inc1);
-	cout<<setw(9)<<len<<" nucs";
-	if (len > 0) cout<<" ["<<s<<","<<e<<"]";
-	cout<<endl;
-	cout<<" second seq => ";
-	s = f->end2() + inc2;
-	e = f->next()->start2() - inc2;
-	len = abs(s - e - inc2);
-	cout<<setw(9)<<len<<" nucs";
-	if (len > 0) cout<<" ["<<s<<","<<e<<"]";
-	cout<<endl;
-      }
-      break;
+        if (!findAlignment(i,true)) continue;  // Fiding alternative alignment
+        if (!_frags_alt) continue;
+        for (AliFragment *f = _frags_alt;f && f->next();f = f->next()) {
+            //if (!getExcisedRange(f,s,e)) continue;
+            if (!getExcisedRange(f,s,e)) {
+                //cout << " -1,-1,-1 -1,-1,-1 ";
+                continue;
+            }
+            //cout<<" first  seq => ";
+            len = abs(s - e - inc1);
+            cout << " " << len << "," << s << "," << e << " ";
+            //cout<<setw(9)<<len<<" nucs";
+            //if (len > 0) cout<<" ["<<s<<","<<e<<"]";
+            //cout<<endl;
+            //cout<<" second seq => ";
+            s = f->end2() + inc2;
+            e = f->next()->start2() - inc2;
+            len = abs(s - e - inc2);
+            cout << " " << len << "," << s << "," << e << " ";
+            //cout<<setw(9)<<len<<" nucs";
+            //if (len > 0) cout<<" ["<<s<<","<<e<<"]";
+            //cout<<endl;
+        }
+        break;
     }
-      
+    cout << endl;
+
     // Printing sequence identity around breakpoints
-    cout<<endl<<"Identity at breakpoints: "<<endl;
+    cout<<endl<<"Identity at breakpoints: ";
     int left,right,s,e;
     for (AliFragment *f = _frags;f && f->next();f = f->next()) {
-      if (!getExcisedRange(f,s,e,0,1)) continue;
+      //if (!getExcisedRange(f,s,e,0,1)) continue;
+      if (!getExcisedRange(f, s, e, 0, 1)) {
+        cout << " -1,-1,-1,-1,-1 ";
+        continue;
+      }
+      int bp1 = inc1*(s - _s1.start()), bp2 = inc1*(e - _s1.start());
+      int n_hom = calcIdentity(_seq1,bp1,bp2,left,right);
+      cout << " " << n_hom << "," << s + inc1*left << "," << s + inc1*(right - 1) << "," << e + inc1*left << "," << e + inc1*(right - 1);
+      s = f->end2() + inc2, e = f->next()->start2();
+      bp1 = inc2*(s - _s2.start()), bp2 = inc2*(e - _s2.start());
+      n_hom = calcIdentity(_seq2,bp1,bp2,left,right);
+      cout << " " << n_hom << "," << s + inc2*left << "," << s + inc2*(right - 1) << "," << e + inc2*left << "," << e + inc2*(right - 1);
+
+      /*
       int bp1 = inc1*(s - _s1.start()), bp2 = inc1*(e - _s1.start());
       int n_hom = calcIdentity(_seq1,bp1,bp2,left,right);
       cout<<" first  seq => "<<setw(9)<<n_hom<<" nucs";
@@ -337,8 +368,9 @@ void AGEaligner::printAlignment()
       if (n_hom > 0)
 	cout<<" ["<<s + inc2*left<<","<<s + inc2*(right - 1)<<"] to"
 	    <<" ["<<e + inc2*left<<","<<e + inc2*(right - 1)<<"]";
-      cout<<endl;
+      cout<<endl;*/
     }
+    cout << endl;
 
     cout<<"Identity outside breakpoints: "<<endl;
     for (AliFragment *f = _frags;f && f->next();f = f->next()) {

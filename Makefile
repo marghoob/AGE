@@ -1,5 +1,5 @@
 VERSION = v0.4
-DEFAULT_FLAGS = -DAGE_VERSION=\"$(VERSION)\" -DAGE_TIME -static
+DEFAULT_FLAGS = -DAGE_VERSION=\"$(VERSION)\" -DAGE_TIME -static -O3
 CXX	= g++ -fopenmp -DOMP $(DEFAULT_FLAGS)
 
 MESS = "Compiling with parallel support."
