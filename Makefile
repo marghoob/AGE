@@ -1,5 +1,12 @@
 VERSION = v0.4
-DEFAULT_FLAGS = -DAGE_VERSION=\"$(VERSION)\" -DAGE_TIME -static -O3
+UNAME_S := $(shell uname -s)
+ifneq ($(UNAME_S),Darwin)
+	STAT_LINK = -static
+else
+	STAT_LINK = ""
+endif
+DEFAULT_FLAGS = -DAGE_VERSION=\"$(VERSION)\" -DAGE_TIME $(STAT_LINK) -O3
+
 CXX	= g++ -fopenmp -DOMP $(DEFAULT_FLAGS)
 
 MESS = "Compiling with parallel support."
@@ -29,7 +36,7 @@ mess:
 	@echo ""
 
 age_align: $(OBJS)
-	$(CXX) -o $@ $(OBJS) -static
+	$(CXX) -o $@ $(OBJS) $(STAT_LINK)
 
 $(OBJDIR)/%.o: %.cpp
 	@mkdir -p $(OBJDIR)
